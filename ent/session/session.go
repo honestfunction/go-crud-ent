@@ -17,19 +17,19 @@ const (
 	FieldExpires = "expires"
 	// FieldUserID holds the string denoting the user_id field in the database.
 	FieldUserID = "user_id"
-	// EdgeID holds the string denoting the id edge name in mutations.
-	EdgeID = "id"
+	// EdgeUser holds the string denoting the user edge name in mutations.
+	EdgeUser = "user"
 	// UserFieldID holds the string denoting the ID field of the User.
 	UserFieldID = "id"
 	// Table holds the table name of the session in the database.
 	Table = "sessions"
-	// IDTable is the table that holds the id relation/edge.
-	IDTable = "sessions"
-	// IDInverseTable is the table name for the User entity.
+	// UserTable is the table that holds the user relation/edge.
+	UserTable = "sessions"
+	// UserInverseTable is the table name for the User entity.
 	// It exists in this package in order to avoid circular dependency with the "user" package.
-	IDInverseTable = "users"
-	// IDColumn is the table column denoting the id relation/edge.
-	IDColumn = "user_id"
+	UserInverseTable = "users"
+	// UserColumn is the table column denoting the user relation/edge.
+	UserColumn = "user_id"
 )
 
 // Columns holds all SQL columns for session fields.
@@ -72,16 +72,16 @@ func ByUserID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUserID, opts...).ToFunc()
 }
 
-// ByIDField orders the results by id field.
-func ByIDField(field string, opts ...sql.OrderTermOption) OrderOption {
+// ByUserField orders the results by user field.
+func ByUserField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newIDStep(), sql.OrderByField(field, opts...))
+		sqlgraph.OrderByNeighborTerms(s, newUserStep(), sql.OrderByField(field, opts...))
 	}
 }
-func newIDStep() *sqlgraph.Step {
+func newUserStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(IDInverseTable, UserFieldID),
-		sqlgraph.Edge(sqlgraph.M2O, true, IDTable, IDColumn),
+		sqlgraph.To(UserInverseTable, UserFieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, UserTable, UserColumn),
 	)
 }

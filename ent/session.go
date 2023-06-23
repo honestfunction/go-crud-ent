@@ -31,24 +31,24 @@ type Session struct {
 
 // SessionEdges holds the relations/edges for other nodes in the graph.
 type SessionEdges struct {
-	// ID holds the value of the id edge.
-	ID *User `json:"id,omitempty"`
+	// User holds the value of the user edge.
+	User *User `json:"user,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [1]bool
 }
 
-// IDOrErr returns the ID value or an error if the edge
+// UserOrErr returns the User value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e SessionEdges) IDOrErr() (*User, error) {
+func (e SessionEdges) UserOrErr() (*User, error) {
 	if e.loadedTypes[0] {
-		if e.ID == nil {
+		if e.User == nil {
 			// Edge was loaded but was not found.
 			return nil, &NotFoundError{label: user.Label}
 		}
-		return e.ID, nil
+		return e.User, nil
 	}
-	return nil, &NotLoadedError{edge: "id"}
+	return nil, &NotLoadedError{edge: "user"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -108,9 +108,9 @@ func (s *Session) Value(name string) (ent.Value, error) {
 	return s.selectValues.Get(name)
 }
 
-// QueryID queries the "id" edge of the Session entity.
-func (s *Session) QueryID() *UserQuery {
-	return NewSessionClient(s.config).QueryID(s)
+// QueryUser queries the "user" edge of the Session entity.
+func (s *Session) QueryUser() *UserQuery {
+	return NewSessionClient(s.config).QueryUser(s)
 }
 
 // Update returns a builder for updating this Session.

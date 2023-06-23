@@ -515,8 +515,8 @@ type SessionMutation struct {
 	id            *uuid.UUID
 	expires       *time.Time
 	clearedFields map[string]struct{}
-	id            *int
-	clearedid     bool
+	user          *int
+	cleareduser   bool
 	done          bool
 	oldValue      func(context.Context) (*Session, error)
 	predicates    []predicate.Session
@@ -664,12 +664,12 @@ func (m *SessionMutation) ResetExpires() {
 
 // SetUserID sets the "user_id" field.
 func (m *SessionMutation) SetUserID(i int) {
-	m.id = &i
+	m.user = &i
 }
 
 // UserID returns the value of the "user_id" field in the mutation.
 func (m *SessionMutation) UserID() (r int, exists bool) {
-	v := m.id
+	v := m.user
 	if v == nil {
 		return
 	}
@@ -695,46 +695,33 @@ func (m *SessionMutation) OldUserID(ctx context.Context) (v int, err error) {
 
 // ResetUserID resets all changes to the "user_id" field.
 func (m *SessionMutation) ResetUserID() {
-	m.id = nil
+	m.user = nil
 }
 
-// SetIDID sets the "id" edge to the User entity by id.
-func (m *SessionMutation) SetIDID(id int) {
-	m.id = &id
+// ClearUser clears the "user" edge to the User entity.
+func (m *SessionMutation) ClearUser() {
+	m.cleareduser = true
 }
 
-// ClearID clears the "id" edge to the User entity.
-func (m *SessionMutation) ClearID() {
-	m.clearedid = true
+// UserCleared reports if the "user" edge to the User entity was cleared.
+func (m *SessionMutation) UserCleared() bool {
+	return m.cleareduser
 }
 
-// IDCleared reports if the "id" edge to the User entity was cleared.
-func (m *SessionMutation) IDCleared() bool {
-	return m.clearedid
-}
-
-// IDID returns the "id" edge ID in the mutation.
-func (m *SessionMutation) IDID() (id int, exists bool) {
-	if m.id != nil {
-		return *m.id, true
-	}
-	return
-}
-
-// IDIDs returns the "id" edge IDs in the mutation.
+// UserIDs returns the "user" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
-// IDID instead. It exists only for internal usage by the builders.
-func (m *SessionMutation) IDIDs() (ids []int) {
-	if id := m.id; id != nil {
+// UserID instead. It exists only for internal usage by the builders.
+func (m *SessionMutation) UserIDs() (ids []int) {
+	if id := m.user; id != nil {
 		ids = append(ids, *id)
 	}
 	return
 }
 
-// ResetID resets all changes to the "id" edge.
-func (m *SessionMutation) ResetID() {
-	m.id = nil
-	m.clearedid = false
+// ResetUser resets all changes to the "user" edge.
+func (m *SessionMutation) ResetUser() {
+	m.user = nil
+	m.cleareduser = false
 }
 
 // Where appends a list predicates to the SessionMutation builder.
@@ -775,7 +762,7 @@ func (m *SessionMutation) Fields() []string {
 	if m.expires != nil {
 		fields = append(fields, session.FieldExpires)
 	}
-	if m.id != nil {
+	if m.user != nil {
 		fields = append(fields, session.FieldUserID)
 	}
 	return fields
@@ -891,8 +878,8 @@ func (m *SessionMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *SessionMutation) AddedEdges() []string {
 	edges := make([]string, 0, 1)
-	if m.id != nil {
-		edges = append(edges, session.EdgeID)
+	if m.user != nil {
+		edges = append(edges, session.EdgeUser)
 	}
 	return edges
 }
@@ -901,8 +888,8 @@ func (m *SessionMutation) AddedEdges() []string {
 // name in this mutation.
 func (m *SessionMutation) AddedIDs(name string) []ent.Value {
 	switch name {
-	case session.EdgeID:
-		if id := m.id; id != nil {
+	case session.EdgeUser:
+		if id := m.user; id != nil {
 			return []ent.Value{*id}
 		}
 	}
@@ -924,8 +911,8 @@ func (m *SessionMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *SessionMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 1)
-	if m.clearedid {
-		edges = append(edges, session.EdgeID)
+	if m.cleareduser {
+		edges = append(edges, session.EdgeUser)
 	}
 	return edges
 }
@@ -934,8 +921,8 @@ func (m *SessionMutation) ClearedEdges() []string {
 // was cleared in this mutation.
 func (m *SessionMutation) EdgeCleared(name string) bool {
 	switch name {
-	case session.EdgeID:
-		return m.clearedid
+	case session.EdgeUser:
+		return m.cleareduser
 	}
 	return false
 }
@@ -944,8 +931,8 @@ func (m *SessionMutation) EdgeCleared(name string) bool {
 // if that edge is not defined in the schema.
 func (m *SessionMutation) ClearEdge(name string) error {
 	switch name {
-	case session.EdgeID:
-		m.ClearID()
+	case session.EdgeUser:
+		m.ClearUser()
 		return nil
 	}
 	return fmt.Errorf("unknown Session unique edge %s", name)
@@ -955,8 +942,8 @@ func (m *SessionMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *SessionMutation) ResetEdge(name string) error {
 	switch name {
-	case session.EdgeID:
-		m.ResetID()
+	case session.EdgeUser:
+		m.ResetUser()
 		return nil
 	}
 	return fmt.Errorf("unknown Session edge %s", name)

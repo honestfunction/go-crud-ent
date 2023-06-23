@@ -48,15 +48,9 @@ func (sc *SessionCreate) SetNillableID(u *uuid.UUID) *SessionCreate {
 	return sc
 }
 
-// SetIDID sets the "id" edge to the User entity by ID.
-func (sc *SessionCreate) SetIDID(id int) *SessionCreate {
-	sc.mutation.SetIDID(id)
-	return sc
-}
-
-// SetID sets the "id" edge to the User entity.
-func (sc *SessionCreate) SetID(u *User) *SessionCreate {
-	return sc.SetIDID(u.ID)
+// SetUser sets the "user" edge to the User entity.
+func (sc *SessionCreate) SetUser(u *User) *SessionCreate {
+	return sc.SetUserID(u.ID)
 }
 
 // Mutation returns the SessionMutation object of the builder.
@@ -108,8 +102,8 @@ func (sc *SessionCreate) check() error {
 	if _, ok := sc.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "Session.user_id"`)}
 	}
-	if _, ok := sc.mutation.IDID(); !ok {
-		return &ValidationError{Name: "id", err: errors.New(`ent: missing required edge "Session.id"`)}
+	if _, ok := sc.mutation.UserID(); !ok {
+		return &ValidationError{Name: "user", err: errors.New(`ent: missing required edge "Session.user"`)}
 	}
 	return nil
 }
@@ -150,12 +144,12 @@ func (sc *SessionCreate) createSpec() (*Session, *sqlgraph.CreateSpec) {
 		_spec.SetField(session.FieldExpires, field.TypeTime, value)
 		_node.Expires = value
 	}
-	if nodes := sc.mutation.IDIDs(); len(nodes) > 0 {
+	if nodes := sc.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   session.IDTable,
-			Columns: []string{session.IDColumn},
+			Table:   session.UserTable,
+			Columns: []string{session.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
